@@ -63,7 +63,8 @@ func _calculate_strafe_delta_v(input: Vector2, delta: float) -> Vector2:
 	var delta_n = delta_v / delta_l
 	var strafe_mult := delta_l / flight_model.speed
 	strafe_mult = smoothstep(0.0, 1.0, strafe_mult)
-	return delta_n * strafe_mult * flight_model.strafe * delta
+	#return delta_n * strafe_mult * flight_model.strafe * delta
+	return delta_n * flight_model.strafe * delta
 
 func _rotate(delta: float):
 	var d := ship.transform.x.angle_to(inputs.target_point - ship.position)

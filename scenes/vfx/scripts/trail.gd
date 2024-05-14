@@ -21,6 +21,7 @@ func _ready():
 	_points = points
 	_offset = position
 	position = Vector2.ZERO
+	if local: _start_floating = -FloatingOrigin.velocity
 	if _parent.is_origin(): _start_floating = -FloatingOrigin.velocity
 
 func _process(delta):
@@ -35,7 +36,7 @@ func _process(delta):
 	points = _points
 
 func _get_shift(delta: float) -> Vector2:
-	if _parent.is_origin():
+	if local:
 		return ((_parent.absolute_velocity + _start_floating) * delta)
 	else:
 		return _parent.shift
