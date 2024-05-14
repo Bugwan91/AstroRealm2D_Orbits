@@ -1,0 +1,122 @@
+[gd_scene load_steps=19 format=3 uid="uid://k6231xltcfhl"]
+
+[ext_resource type="Script" path="res://scenes/thruster/scripts/thruster.gd" id="1_esf7n"]
+[ext_resource type="Script" path="res://scenes/thruster/scripts/flame.gd" id="2_a1vau"]
+[ext_resource type="Texture2D" uid="uid://dsbg3e5xn8cd4" path="res://assets/VFX_textures/muzzle_04.png" id="3_rdjn0"]
+[ext_resource type="Texture2D" uid="uid://8iveh5gra6v3" path="res://assets/VFX_textures/smoke_01.png" id="4_rfruv"]
+[ext_resource type="Texture2D" uid="uid://c388olp5jsja" path="res://assets/my/circle_texture_128.tres" id="5_2krt3"]
+[ext_resource type="AudioStream" uid="uid://xn71bm7xult" path="res://assets/sounds/thruster_loop.wav" id="5_raf0x"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_hkf44"]
+light_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_direw"]
+offsets = PackedFloat32Array(0, 0.286041, 0.576046, 1)
+colors = PackedColorArray(10, 10, 1, 1, 8, 5, 0, 1, 5, 1, 0, 0.78, 3, 0.2, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ulhdr"]
+gradient = SubResource("Gradient_direw")
+use_hdr = true
+
+[sub_resource type="Curve" id="Curve_3qwdg"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.245841, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.259323), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ld446"]
+curve = SubResource("Curve_3qwdg")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0q42v"]
+particle_flag_disable_z = true
+direction = Vector3(0, -1, 0)
+spread = 0.0
+initial_velocity_min = 500.0
+initial_velocity_max = 2000.0
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_ld446")
+color_ramp = SubResource("GradientTexture1D_ulhdr")
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1q8r7"]
+light_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_vgmsy"]
+offsets = PackedFloat32Array(0, 0.263462, 0.653846, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.0784314, 1, 1, 1, 0.0784314, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ecymi"]
+gradient = SubResource("Gradient_vgmsy")
+
+[sub_resource type="Curve" id="Curve_oy74b"]
+_data = [Vector2(0, 0.0587617), 0.0, 0.0, 0, 0, Vector2(0.593085, 0.338405), 1.46545, 1.46545, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_d20rb"]
+curve = SubResource("Curve_oy74b")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_lhffd"]
+lifetime_randomness = 0.5
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(8, 8, 1)
+angle_min = -180.0
+angle_max = 180.0
+direction = Vector3(0, 1, 0)
+spread = 3.0
+initial_velocity_min = 400.0
+initial_velocity_max = 800.0
+angular_velocity_min = -90.0
+angular_velocity_max = 90.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.2
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_d20rb")
+color_ramp = SubResource("GradientTexture1D_ecymi")
+
+[node name="Thruster" type="Marker2D"]
+script = ExtResource("1_esf7n")
+
+[node name="Flame" type="Node2D" parent="."]
+unique_name_in_owner = true
+light_mask = 0
+rotation = 1.5708
+script = ExtResource("2_a1vau")
+
+[node name="FlameEffect" type="GPUParticles2D" parent="Flame"]
+unique_name_in_owner = true
+light_mask = 0
+material = SubResource("CanvasItemMaterial_hkf44")
+position = Vector2(0.000152588, 40.5)
+rotation = 3.14159
+scale = Vector2(0.1, 0.2)
+amount = 4
+process_material = SubResource("ParticleProcessMaterial_0q42v")
+texture = ExtResource("3_rdjn0")
+lifetime = 0.2
+randomness = 0.2
+local_coords = true
+
+[node name="SmokeEffect" type="GPUParticles2D" parent="Flame"]
+unique_name_in_owner = true
+light_mask = 0
+material = SubResource("CanvasItemMaterial_1q8r7")
+emitting = false
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_lhffd")
+texture = ExtResource("4_rfruv")
+lifetime = 0.3
+local_coords = true
+
+[node name="Light" type="PointLight2D" parent="Flame"]
+unique_name_in_owner = true
+visible = false
+rotation = -1.5708
+color = Color(1, 0.717647, 0, 1)
+energy = 0.0
+texture = ExtResource("5_2krt3")
+texture_scale = 3.0
+
+[node name="Sound" type="AudioStreamPlayer2D" parent="Flame"]
+unique_name_in_owner = true
+stream = ExtResource("5_raf0x")
+volume_db = -0.07
+pitch_scale = 1.25
+max_distance = 4000.0

@@ -1,0 +1,73 @@
+[gd_scene load_steps=6 format=3 uid="uid://bi8060cxyiqd7"]
+
+[ext_resource type="Script" path="res://scenes/ui/scripts/player_ship_status_ui.gd" id="1_06tjq"]
+[ext_resource type="Texture2D" uid="uid://bdcrgonof28mh" path="res://assets/spaceships/temperature.tres" id="2_3bl0r"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_48qji"]
+bg_color = Color(1, 0.8, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jlrfh"]
+bg_color = Color(0, 0.9, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n1c7c"]
+bg_color = Color(0.4, 1, 0.4, 1)
+
+[node name="PlayerShipStatusUI" type="PanelContainer"]
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 2
+script = ExtResource("1_06tjq")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 1
+
+[node name="HealthProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 16)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_48qji")
+max_value = 1.0
+step = 0.001
+show_percentage = false
+
+[node name="HeatProgressBar" type="TextureProgressBar" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+max_value = 1.0
+step = 0.001
+nine_patch_stretch = true
+texture_progress = ExtResource("2_3bl0r")
+tint_progress = Color(1.5, 1.5, 1.5, 1)
+
+[node name="ShieldProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(500, 16)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_jlrfh")
+max_value = 1.0
+step = 0.001
+show_percentage = false
+
+[node name="SpeedProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 8)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_n1c7c")
+max_value = 1.0
+step = 0.001
+show_percentage = false

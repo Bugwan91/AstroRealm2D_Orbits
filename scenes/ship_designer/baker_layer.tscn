@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=3 uid="uid://pbokfmo8p4jh"]
+
+[ext_resource type="Script" path="res://scenes/ship_designer/scripts/view_layer_baker.gd" id="1_bhafl"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mwndk"]
+load_path = "res://.godot/imported/01_base.png-128da25420d03d0b06c57fe2796bc06d.ctex"
+
+[node name="BakerLayer" type="SubViewport"]
+transparent_bg = true
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(128, 128)
+render_target_update_mode = 4
+script = ExtResource("1_bhafl")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="views" type="Node2D" parent="CanvasLayer"]
+unique_name_in_owner = true
+position = Vector2(64, 64)
+
+[node name="background" type="Sprite2D" parent="CanvasLayer/views"]
+unique_name_in_owner = true
+z_index = -4096
+
+[node name="hull" type="Sprite2D" parent="CanvasLayer/views"]
+unique_name_in_owner = true
+texture_filter = 3
+texture = SubResource("CompressedTexture2D_mwndk")
+
+[node name="hull_ext" type="Sprite2D" parent="CanvasLayer/views"]
+unique_name_in_owner = true
+texture_filter = 3
+
+[node name="engines" type="Node2D" parent="CanvasLayer/views"]
+unique_name_in_owner = true
+texture_filter = 3

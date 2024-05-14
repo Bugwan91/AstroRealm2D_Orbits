@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://be8uuh84h5m7r"]
+
+[ext_resource type="Script" path="res://scenes/background/scripts/canvas_baker.gd" id="1_yepog"]
+
+[node name="CanvasBaker" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+unique_name_in_owner = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(4096, 4096)
+render_target_update_mode = 4
+script = ExtResource("1_yepog")
+filename = "stars_045"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="SubViewportContainer/SubViewport"]

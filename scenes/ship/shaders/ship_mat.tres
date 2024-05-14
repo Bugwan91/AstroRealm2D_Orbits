@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cqy56rhnpln3r"]
+
+[ext_resource type="Shader" path="res://scenes/ship/shaders/ship.gdshader" id="1_04tic"]
+
+[resource]
+shader = ExtResource("1_04tic")
+shader_parameter/emission = 5.0
+shader_parameter/shininess = 0.0

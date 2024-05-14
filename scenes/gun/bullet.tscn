@@ -1,0 +1,68 @@
+[gd_scene load_steps=10 format=3 uid="uid://dwdthpisfmojs"]
+
+[ext_resource type="Script" path="res://scenes/gun/scripts/bullet.gd" id="1_gtbct"]
+[ext_resource type="PackedScene" uid="uid://dcjlidv1ftgrv" path="res://scenes/gun/hit_effect.tscn" id="2_m6c5x"]
+[ext_resource type="Texture2D" uid="uid://c5jb4kvkgd8ux" path="res://assets/bullets/laser_16.png" id="4_0sbfp"]
+[ext_resource type="Texture2D" uid="uid://c388olp5jsja" path="res://assets/my/circle_texture_128.tres" id="5_rn3vo"]
+[ext_resource type="Script" path="res://scenes/vfx/scripts/trail.gd" id="6_51oes"]
+[ext_resource type="PackedScene" uid="uid://dwdaypca54j40" path="res://scenes/main/radar_item.tscn" id="6_h12vt"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_8unas"]
+light_mode = 1
+
+[sub_resource type="Curve" id="Curve_i0wtl"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.43133, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_7dx5m"]
+colors = PackedColorArray(1, 1, 1, 0.5, 1, 1, 1, 0)
+
+[node name="Bullet" type="Node2D"]
+script = ExtResource("1_gtbct")
+hit_effect_scene = ExtResource("2_m6c5x")
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true
+one_shot = true
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+unique_name_in_owner = true
+rotation = 4.71239
+collision_mask = 4
+hit_from_inside = true
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="Sprite" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+modulate = Color(0, 8, 0, 0.5)
+light_mask = 0
+material = SubResource("CanvasItemMaterial_8unas")
+scale = Vector2(2, 1)
+texture = ExtResource("4_0sbfp")
+
+[node name="Light" type="PointLight2D" parent="."]
+unique_name_in_owner = true
+texture = ExtResource("5_rn3vo")
+texture_scale = 2.0
+
+[node name="PredictionRay" type="RayCast2D" parent="."]
+unique_name_in_owner = true
+visible = false
+rotation = -1.5708
+collision_mask = 64
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="RadarItem" parent="." instance=ExtResource("6_h12vt")]
+texture = ExtResource("4_0sbfp")
+icon_scale = 0.5
+
+[node name="Trail" type="Line2D" parent="."]
+unique_name_in_owner = true
+width = 2.0
+width_curve = SubResource("Curve_i0wtl")
+gradient = SubResource("Gradient_7dx5m")
+script = ExtResource("6_51oes")
+local = true
+lifetime = 0.1
