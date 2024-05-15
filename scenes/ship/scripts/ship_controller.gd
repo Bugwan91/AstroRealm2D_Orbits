@@ -77,4 +77,4 @@ func _rotate(delta: float):
 
 const WARP := 3.0
 func _boost(delta: float):
-	ship.warp = 1.0 + inputs.boost * WARP
+	ship.warp = inputs.boost * WARP

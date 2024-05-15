@@ -25,7 +25,7 @@ var warp: float
 
 var total_velocity: Vector2:
 	get:
-		return velocity * warp
+		return velocity * (1.0 + warp)
 
 var speed: float:
 	get:

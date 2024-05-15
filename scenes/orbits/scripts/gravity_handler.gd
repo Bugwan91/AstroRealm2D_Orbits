@@ -35,6 +35,6 @@ func _update_line():
 		var dist = delta_p.length()
 		var dir = delta_p / dist
 		v += GravityManager.G * current_body.mass / pow(dist, 2) * dir
-		p += v * w
+		p += v * (1.0 + w)
 		points.append(p)
 	line.points = points

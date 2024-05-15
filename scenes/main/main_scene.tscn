@@ -108,7 +108,7 @@ blend_mode = 1
 position = Vector2(-330, -177)
 rotation = -0.785398
 color = Color(0.580392, 0.72549, 1, 1)
-energy = 0.8
+energy = 0.98
 blend_mode = 2
 height = 0.2
 

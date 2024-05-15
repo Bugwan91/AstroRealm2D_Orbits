@@ -16,7 +16,7 @@ var _velocity: Vector2
 
 @export var angular_velocity: float
 
-@export var warp := 1.0:
+@export var warp: float:
 	set(value):
 		if is_origin():
 			FloatingOrigin.warp = value
@@ -27,7 +27,7 @@ var _velocity: Vector2
 
 var total_velocity: Vector2:
 	get:
-		return absolute_velocity * warp
+		return absolute_velocity * ( 1.0 + warp)
 
 var acceleration: Vector2
 var _acceleration_next_tick: Vector2
