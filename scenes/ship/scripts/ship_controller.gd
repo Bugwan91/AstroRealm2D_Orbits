@@ -57,14 +57,14 @@ func _strafe(delta: float):
 	ship.add_velocity(_calculate_strafe_delta_v(str_input, delta))
 
 func _calculate_strafe_delta_v(input: Vector2, delta: float) -> Vector2:
-	var target_v := input * flight_model.speed
-	var delta_v := target_v - ship.absolute_velocity
-	var delta_l := delta_v.length()
-	var delta_n = delta_v / delta_l
-	var strafe_mult := delta_l / flight_model.speed
-	strafe_mult = smoothstep(0.0, 1.0, strafe_mult)
+	#var target_v := input * flight_model.speed
+	#var delta_v := target_v - ship.absolute_velocity
+	#var delta_l := delta_v.length()
+	#var delta_n = delta_v / delta_l
+	#var strafe_mult := delta_l / flight_model.speed
+	#strafe_mult = smoothstep(0.0, 1.0, strafe_mult)
 	#return delta_n * strafe_mult * flight_model.strafe * delta
-	return delta_n * flight_model.strafe * delta
+	return input * flight_model.strafe * delta
 
 func _rotate(delta: float):
 	var d := ship.transform.x.angle_to(inputs.target_point - ship.position)
@@ -75,5 +75,6 @@ func _rotate(delta: float):
 	var vt := 0.5 * (sqrt(a * (a + 8.0 * absf(d))) - a) * signf(d) / delta
 	ship.angular_velocity = vt
 
+const WARP := 3.0
 func _boost(delta: float):
-	pass
+	ship.warp = 1.0 + inputs.boost * WARP

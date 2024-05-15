@@ -16,6 +16,19 @@ var _velocity: Vector2
 
 @export var angular_velocity: float
 
+@export var warp := 1.0:
+	set(value):
+		if is_origin():
+			FloatingOrigin.warp = value
+		else:
+			warp = value
+	get:
+		return FloatingOrigin.warp if is_origin() else warp
+
+var total_velocity: Vector2:
+	get:
+		return absolute_velocity * warp
+
 var acceleration: Vector2
 var _acceleration_next_tick: Vector2
 
@@ -43,7 +56,7 @@ func _ready():
 	process_priority = -1
 
 func _process(delta: float):
-	shift = _velocity * delta
+	shift = total_velocity * delta
 	if not is_origin():
 		position += shift
 	rotation += angular_velocity * delta

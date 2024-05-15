@@ -21,9 +21,15 @@ var velocity := Vector2.ZERO:
 		velocity_delta += value - velocity
 		velocity = value
 
+var warp: float
+
+var total_velocity: Vector2:
+	get:
+		return velocity * warp
+
 var speed: float:
 	get:
-		return velocity.x + velocity.y
+		return total_velocity.length()
 
 ## Delta velocity of world from last frame
 var velocity_delta := Vector2.ZERO
@@ -48,14 +54,16 @@ func _physics_process(delta):
 	velocity_delta = Vector2.ZERO
 	MyDebug.info("origin", origin)
 	MyDebug.info("origin velocity", velocity)
-	MyDebug.info("speed", speed)
+	MyDebug.info("warp factor", warp)
+	MyDebug.info("speed base", velocity.length())
+	MyDebug.info("speed total", speed)
 
 func absolute_position(node: Node2D) -> Vector2:
-	return node.position + origin
+	return node.global_position + origin
 
 func _shift_objects():
 	var time := Time.get_ticks_usec() * 0.000001
-	shift = velocity * (time - last_update_time) + _extra_shift
+	shift = total_velocity * (time - last_update_time) + _extra_shift
 	_extra_shift = Vector2.ZERO
 	origin += shift
 	for node in MainState.main_scene.get_children():
@@ -68,6 +76,7 @@ func reset_origin(body: FloatingOriginKinetic):
 	origin_body = body
 	if not origin_body:
 		velocity_delta = -velocity
+		warp = 1.0
 		velocity = Vector2.ZERO
 
 func move(delta: Vector2):

@@ -12,7 +12,7 @@ show_default_buttons=false
 
 [application]
 
-config/name="AstroRealm"
+config/name="OrbitRealm"
 run/main_scene="res://scenes/main/main_scene.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 run/max_fps=60
@@ -24,6 +24,7 @@ MainState="*res://scenes/main/scripts/main_state.gd"
 DebugDraw2d="*res://addons/debugdraw2d/DebugDraw2D.gd"
 FloatingOrigin="*res://scenes/main/scripts/floating_origin.gd"
 MyDebug="*res://scenes/main/scripts/debug.gd"
+GravityManager="*res://scenes/orbits/scripts/gravity_manager.gd"
 
 [display]
 
@@ -55,6 +56,7 @@ folder_colors={
 "res://scenes/main/scripts/": "blue",
 "res://scenes/navigation_grid/scripts/": "blue",
 "res://scenes/navigation_grid/shaders/": "purple",
+"res://scenes/orbits/scripts/": "purple",
 "res://scenes/player/scripts/": "blue",
 "res://scenes/ship/scripts/": "blue",
 "res://scenes/ship/shaders/": "purple",
