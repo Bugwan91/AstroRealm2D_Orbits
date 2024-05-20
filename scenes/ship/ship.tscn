@@ -1,7 +1,8 @@
-[gd_scene load_steps=28 format=3 uid="uid://ce1dw618jykrb"]
+[gd_scene load_steps=26 format=3 uid="uid://ce1dw618jykrb"]
 
 [ext_resource type="Script" path="res://scenes/ship/scripts/ship.gd" id="1_5ckws"]
 [ext_resource type="Resource" uid="uid://c5khrxh5yovq4" path="res://resources/ships/base_ship.tres" id="2_uwj24"]
+[ext_resource type="PackedScene" uid="uid://dayksdufxofk4" path="res://scenes/orbits/gravity_handler.tscn" id="3_ihomq"]
 [ext_resource type="Shader" path="res://scenes/ship/shaders/ship.gdshader" id="7_byino"]
 [ext_resource type="Script" path="res://scenes/ship/scripts/weapons_slots.gd" id="8_4fwa5"]
 [ext_resource type="Texture2D" uid="uid://bdcrgonof28mh" path="res://assets/spaceships/temperature.tres" id="8_ts42t"]
@@ -18,13 +19,7 @@
 [ext_resource type="Script" path="res://scenes/heat/scripts/Heat.gd" id="20_1gdyl"]
 [ext_resource type="Script" path="res://scenes/vfx/scripts/trail.gd" id="20_q0150"]
 [ext_resource type="Script" path="res://scenes/main/scripts/collider.gd" id="20_vb7t8"]
-[ext_resource type="Script" path="res://scenes/orbits/scripts/gravity_handler.gd" id="20_vjgsy"]
 [ext_resource type="PackedScene" uid="uid://dwdaypca54j40" path="res://scenes/main/radar_item.tscn" id="20_w3y8g"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_oivlw"]
-
-[sub_resource type="Gradient" id="Gradient_8u6to"]
-colors = PackedColorArray(1, 1, 1, 0.2, 1, 1, 1, 0)
 
 [sub_resource type="Curve" id="Curve_p4pb7"]
 _data = [Vector2(0, 1), 0.0, -0.322088, 0, 0, Vector2(1, 0), -1.16987, 0.0, 0, 0]
@@ -57,16 +52,7 @@ radius = 80.0
 script = ExtResource("1_5ckws")
 data = ExtResource("2_uwj24")
 
-[node name="GravityHandler" type="Area2D" parent="." node_paths=PackedStringArray("line")]
-monitoring = false
-script = ExtResource("20_vjgsy")
-line = NodePath("Line2D")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="GravityHandler"]
-shape = SubResource("CircleShape2D_oivlw")
-
-[node name="Line2D" type="Line2D" parent="GravityHandler"]
-gradient = SubResource("Gradient_8u6to")
+[node name="GravityHandler" parent="." instance=ExtResource("3_ihomq")]
 
 [node name="WeaponSlots" type="Node2D" parent="."]
 unique_name_in_owner = true

@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3 uid="uid://dayksdufxofk4"]
+
+[ext_resource type="Script" path="res://scenes/orbits/scripts/gravity_handler.gd" id="1_ouyn4"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_oivlw"]
+
+[sub_resource type="Gradient" id="Gradient_iqv6p"]
+colors = PackedColorArray(0, 0.5, 2, 0.2, 0, 0.5, 2, 0)
+
+[sub_resource type="Gradient" id="Gradient_2e7ho"]
+colors = PackedColorArray(0, 2, 1.5, 0.2, 0, 2, 1.5, 0)
+
+[sub_resource type="Gradient" id="Gradient_pk6wn"]
+colors = PackedColorArray(0, 0.4, 2, 0.2, 0, 0.4, 2, 0)
+
+[sub_resource type="Gradient" id="Gradient_8u6to"]
+colors = PackedColorArray(4, 0, 0, 0.2, 4, 0, 0, 0)
+
+[node name="GravityHandler" type="Area2D" node_paths=PackedStringArray("line", "line_local", "warp_line")]
+monitoring = false
+script = ExtResource("1_ouyn4")
+line = NodePath("Orbit")
+line_local = NodePath("OrbitLocal")
+warp_line = NodePath("Warp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_oivlw")
+
+[node name="OrbitPast" type="Line2D" parent="."]
+gradient = SubResource("Gradient_iqv6p")
+antialiased = true
+
+[node name="Orbit" type="Line2D" parent="."]
+gradient = SubResource("Gradient_2e7ho")
+antialiased = true
+
+[node name="OrbitLocal" type="Line2D" parent="."]
+gradient = SubResource("Gradient_pk6wn")
+antialiased = true
+
+[node name="Warp" type="Line2D" parent="."]
+gradient = SubResource("Gradient_8u6to")
+antialiased = true

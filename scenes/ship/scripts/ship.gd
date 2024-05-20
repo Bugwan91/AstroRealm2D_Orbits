@@ -31,6 +31,7 @@ var is_player: bool = false:
 
 func _ready():
 	assert(data != null, "Ship Data is missed")
+	max_warp = data.flight_model.boost_base
 	_setup_view()
 	_setup_flight_controller()
 	_setup_health()

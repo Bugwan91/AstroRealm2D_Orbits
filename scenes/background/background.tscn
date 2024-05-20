@@ -249,6 +249,7 @@ texture = ExtResource("16_q0cmu")
 script = ExtResource("3_u112l")
 
 [node name="Stars2" type="Sprite2D" parent="Layers/256"]
+visible = false
 texture_filter = 4
 texture_repeat = 2
 material = SubResource("ShaderMaterial_04u48")
@@ -268,6 +269,7 @@ texture = ExtResource("20_ahac3")
 script = ExtResource("3_u112l")
 
 [node name="Stars3" type="Sprite2D" parent="Layers/64"]
+visible = false
 texture_filter = 4
 texture_repeat = 2
 material = SubResource("ShaderMaterial_edfsm")
@@ -287,6 +289,7 @@ texture = ExtResource("24_t06r1")
 script = ExtResource("3_u112l")
 
 [node name="Stars4" type="Sprite2D" parent="Layers/16"]
+visible = false
 texture_filter = 4
 texture_repeat = 2
 material = SubResource("ShaderMaterial_uya4s")
@@ -309,6 +312,7 @@ script = ExtResource("3_u112l")
 script = ExtResource("1_48uix")
 
 [node name="BackgroundSprite" type="Sprite2D" parent="Layers/0"]
+visible = false
 texture_filter = 4
 texture_repeat = 2
 material = SubResource("ShaderMaterial_qaupf")

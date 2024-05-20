@@ -28,4 +28,5 @@ noise = SubResource("FastNoiseLite_jx1q7")
 light_mask = 0
 texture_repeat = 2
 material = SubResource("ShaderMaterial_bdry2")
+scale = Vector2(16, 16)
 texture = SubResource("NoiseTexture2D_2ywoa")

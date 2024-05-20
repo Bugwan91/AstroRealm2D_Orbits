@@ -7,6 +7,9 @@ extends Node2D
 @export var ship_blueprint: ShipBlueprint
 @export var input_reader: ShipInput
 
+@export var orbit_line: Line2D
+@export var path_line: Line2D
+
 @onready var player_ship_baker: ShipBlueprintBaker = %PlayerShipBaker
 @onready var autopilot_pointer = %AutopilotPointer
 
@@ -36,7 +39,7 @@ func spawn_player_ship(position: Vector2 = Vector2.ZERO):
 	ship.add_child(audio_listener)
 	audio_listener.make_current()
 	add_child(ship)
-	radar.radius = 500000.0
+	radar.radius = 1000000.0
 
 func _create_ship_configuration() -> ShipData:
 	var ship_data = ShipData.new()

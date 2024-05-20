@@ -7,6 +7,7 @@ signal player_dead
 signal radar_updated(radar: Radar)
 
 const MAX_SPEED: float = 100000.0
+const START_TIME: float = 0.0
 
 var main_scene: MainScene:
 	set(value):
@@ -24,6 +25,14 @@ var fa_tracking_distance := 0.0
 var fa_autopilot := false
 var fa_autopilot_speed := 500.0
 ### TODO # REMOVE ### REFACTOR ###
+
+var camera_zoom: float:
+	get:
+		var camera := get_viewport().get_camera_2d()
+		return camera.zoom.x if is_instance_valid(camera) else 1.0
+
+func current_time() -> float:
+	return 0.000001 * Time.get_ticks_usec() + MainState.START_TIME
 
 func connect_to_player(callback: Callable):
 	player_ship_updated.connect(callback)

@@ -8,7 +8,7 @@ signal shoot_recoil(force: float)
 @export var bullet_color: Color = Color.RED
 @export var accuracy: float = 0.05
 @export_range(0, 60) var fire_rate := 10.0
-@export_range(0, 5000) var range := 2000.0
+@export_range(0, 50000) var range := 2000.0
 @export_range(0, 10000) var bullet_speed := 3000.0
 @export_range(0, 1000) var recoil := 20.0
 @export_range(0, 1000) var heat_per_shoot := 5.0

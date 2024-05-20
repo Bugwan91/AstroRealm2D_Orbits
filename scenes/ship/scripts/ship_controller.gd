@@ -75,6 +75,5 @@ func _rotate(delta: float):
 	var vt := 0.5 * (sqrt(a * (a + 8.0 * absf(d))) - a) * signf(d) / delta
 	ship.angular_velocity = vt
 
-const WARP := 3.0
 func _boost(delta: float):
-	ship.warp = inputs.boost * WARP
+	ship.warp = inputs.boost * ship.max_warp
