@@ -8,26 +8,39 @@ extends Node2D
 @export var orbit_color: Gradient
 
 var parent: CelestialBody
-var main_state: OrbitState
-var virtual_state: OrbitState
+var main_state: OrbitState = OrbitState.new()
+var predict_state: OrbitState = OrbitState.new()
+
+var r_influence: float:
+	set(value):
+		r_influence = value
+		_influence_circle.radius = r_influence
+		_influence_area.monitoring = r_influence > 0.1
 
 var _equilibrium: float
 var _influence_area := Area2D.new()
 var _influence_circle: CircleShape2D
 
 var _orbit_line: Line2D
+var _global_orbit_line: Line2D
 
 func _ready():
 	_setup_parent()
 	_setup_influence_area()
 	_setup_orbit()
+	_update()
 
 func _process(delta: float):
 	if Engine.is_editor_hint(): return
+	_update_orbit_lines()
 	if dynamic:
+		_update()
 		main_state.update()
-		position = main_state.point
+		position =  main_state.position
 		draw_orbit()
+
+func _physics_process(_delta: float):
+	_update_influence_area()
 
 func _get_tool_buttons() -> Array:
 	return [
@@ -41,6 +54,12 @@ func on_entered(object: Area2D):
 func on_exit(object: Area2D):
 	if not object is GravityHandler: return
 	(object as GravityHandler).celestial = parent
+
+func _update():
+	main_state.update()
+	if Engine.is_editor_hint(): return
+	position = main_state.position
+	draw_orbit()
 
 func _setup_influence_area():
 	var shape := CollisionShape2D.new()
@@ -67,11 +86,9 @@ func _setup_orbit():
 	orbit.semi_major_axis = position.length()
 	orbit.M = parent.mass
 	orbit.recalculate_const_properties()
-	main_state = OrbitState.new()
 	main_state.orbit = orbit
 	main_state.update()
-	virtual_state = OrbitState.new()
-	virtual_state.orbit = orbit
+	predict_state.orbit = orbit
 	_setup_orbit_line()
 
 func _setup_orbit_line():
@@ -80,12 +97,27 @@ func _setup_orbit_line():
 	_orbit_line.width = 2.0
 	_orbit_line.closed = true
 	add_child(_orbit_line)
+	
+	_global_orbit_line = Line2D.new()
+	_global_orbit_line.gradient = orbit_color
+	_global_orbit_line.width = 1.0
+	_global_orbit_line.closed = false
+	add_child(_global_orbit_line)
 
-func draw_orbit():
+func _update_orbit_lines():
 	if is_sun(): return
-	_orbit_line.points = main_state.draw_orbit()
 	_orbit_line.global_position = parent.global_position
 	_orbit_line.width = 2.0 / MainState.camera_zoom
+	if not is_instance_valid(GravityManager.sun): return
+	_global_orbit_line.global_position = GravityManager.sun.global_position
+	_global_orbit_line.width = 1.0 / MainState.camera_zoom
+
+func draw_orbit():
+	_update_orbit_lines()
+	if is_sun(): return
+	_orbit_line.points = main_state.orbit_points()
+	if not is_instance_valid(GravityManager.sun): return
+	_global_orbit_line.points = _global_orbit_points()
 
 func is_sun() -> bool:
 	return not is_instance_valid(parent)
@@ -93,49 +125,41 @@ func is_sun() -> bool:
 func is_orbiting() -> bool:
 	return not is_sun() and dynamic
 
-func gravity(p: Vector2, virtual: bool = false) -> Vector2:
-	var delta_p = current_position(virtual) - p
-	var dist = delta_p.length()
-	var dir = delta_p / dist
-	var a: Vector2 = (GravityManager.G * mass / pow(dist, 2)) * dir
-	if GravityManager.FULL_GRAVITY and not is_sun(): a += parent.gravity(p, virtual)
+func gravity(p: Vector2, predict: bool = false) -> Vector2:
+	var delta_p = current_position(predict) - p
+	var dir = delta_p.normalized()
+	var a: Vector2 = (GravityManager.G * mass / delta_p.length_squared()) * dir
+	if GravityManager.FULL_GRAVITY and not is_sun(): a += parent.gravity(p, predict)
 	return a
 
-func set_virtual_time(time: float):
-	if is_sun(): return
-	virtual_state.time = time
-	parent.set_virtual_time(time)
+func set_predict_time(time: float):
+	predict_state.update(time)
+	if not is_sun(): parent.set_predict_time(time)
 
-func state(virtual: bool = false) -> OrbitState:
-	return virtual_state if virtual else main_state
+func state(predict: bool = false) -> OrbitState:
+	return predict_state if predict and is_orbiting() else main_state
 
-func current_position(virtual: bool = false) -> Vector2:
-	return state(virtual).point if is_orbiting() else global_position + _parent_position(virtual)
+func current_position(predict: bool = false) -> Vector2:
+	if is_sun(): return global_position
+	return state(predict).position + parent.current_position(predict)
 
-func _parent_position(virtual: bool = false) -> Vector2:
-	return parent.current_position(virtual) if not is_sun() else Vector2.ZERO
+func current_velocity(predict: bool = false) -> Vector2:
+	if is_sun(): return Vector2.ZERO
+	return state(predict).velocity + parent.current_velocity(predict)
 
-func current_velocity(virtual: bool = false) -> Vector2:
-	return (state(virtual).velocity if is_orbiting() else Vector2.ZERO) + _parent_velocity(virtual)
-
-func _parent_velocity(virtual: bool = false) -> Vector2:
-	return parent.current_velocity(virtual) if not is_sun() else Vector2.ZERO
-
-func current_acceleration(virtual: bool = false) -> Vector2:
-	return (state(virtual).acceleration if is_orbiting else Vector2.ZERO) + _parent_acceleration(virtual)
-
-func _parent_acceleration(virtual: bool = false) -> Vector2:
-	return parent.current_acceleration(virtual) if not is_sun() else Vector2.ZERO
+func current_acceleration(predict: bool = false) -> Vector2:
+	if is_sun(): return Vector2.ZERO
+	return state(predict).acceleration + parent.current_acceleration(predict)
 
 func _sphere_of_influence() -> float:
-	if is_sun(): return 0.0
+	if is_sun(): return sqrt(GravityManager.G * mass / GravityManager.GRAVITY_THRESHOLD)
 	var m := mass
 	var M := parent.mass
 	var R := position.length()
 	return R * pow(m/M, 2.0 / 5.0)
 
 func _calculate_equlibrium_radius() -> float:
-	if is_sun(): return 0.0
+	if is_sun(): return sqrt(GravityManager.G * mass / GravityManager.GRAVITY_THRESHOLD)
 	var m := mass
 	var M := parent.mass
 	var R := position.length()
@@ -144,9 +168,17 @@ func _calculate_equlibrium_radius() -> float:
 	return abs(r)
 
 func _update_influence_area():
-	_setup_parent()
-	_influence_circle.radius = _calculate_equlibrium_radius()
-	#_influence_circle.radius = _sphere_of_influence()
-	_influence_area.monitoring = _influence_circle.radius > 0.1
+	r_influence = _calculate_equlibrium_radius()
+	#_sphere_of_influence()
+	
 
-
+func _global_orbit_points(segments_count: int = 256, rotations: int = 5.0) -> Array[Vector2]:
+	if not is_orbiting() or not parent.is_orbiting(): return []
+	var points: Array[Vector2] = []
+	var ratio = orbit.T / parent.orbit.T
+	var theta_step := TAU / segments_count
+	for i in range(segments_count * rotations):
+		var p_l := orbit.ellipse_point_for(state().true_anomaly + i * theta_step)
+		var p_g := parent.orbit.ellipse_point_for(parent.state().true_anomaly + i * theta_step * ratio)
+		points.append(p_l + p_g)
+	return points

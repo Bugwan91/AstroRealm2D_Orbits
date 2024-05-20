@@ -75,20 +75,18 @@ func _ready():
 	z_index = 1000
 
 func _process(delta):
-	_process_primitives(rects, delta)
-	_process_primitives(circle_arcs, delta)
-	_process_primitives(lines, delta)
+	rects = _process_primitives(rects, delta)
+	circle_arcs = _process_primitives(circle_arcs, delta)
+	lines = _process_primitives(lines, delta)
 	queue_redraw()
 
-func _process_primitives(primitives, delta):
-	var indices_to_remove = []
-	for i in range(0, primitives.size()):
-		var primitive = primitives[i]
-		if primitive.duration_left < 0:
-			indices_to_remove.push_back(i)
+func _process_primitives(primitives: Array, delta: float) -> Array:
+	var alive = []
+	for primitive in primitives:
+		if primitive.duration_left >= 0:
+			alive.append(primitive)
 		primitive.duration_left -= delta
-	for i in indices_to_remove:
-		primitives.remove_at(i)
+	return alive
 
 func _draw():
 	_draw_primitives(rects)

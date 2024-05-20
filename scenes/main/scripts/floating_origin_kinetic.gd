@@ -54,15 +54,17 @@ var canvas_position: Vector2:
 		return get_global_transform_with_canvas().origin
 
 var shift: Vector2
+var _extra_shift: Vector2
 
 func _ready():
 	process_priority = -1
 
 func _process(delta: float):
-	shift = total_velocity * delta
+	shift = total_velocity * delta + _extra_shift
 	if not is_origin():
 		position += shift
 	rotation += angular_velocity * delta
+	_extra_shift = Vector2.ZERO
 
 func _physics_process(_delta: float):
 	acceleration = _acceleration_next_tick
@@ -71,6 +73,9 @@ func _physics_process(_delta: float):
 
 func add_velocity(delta_v: Vector2):
 	_acceleration_next_tick += delta_v
+
+func add_position(pos: Vector2):
+	_extra_shift += pos
 
 func is_origin() -> bool:
 	return self == FloatingOrigin.origin_body

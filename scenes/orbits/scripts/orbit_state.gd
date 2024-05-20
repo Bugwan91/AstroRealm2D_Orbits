@@ -9,14 +9,15 @@ var eccentric_anomaly: float
 var true_anomaly: float
 var distance: float
 var radial_distance: float
-var point: Vector2
+var position: Vector2
 var velocity: Vector2
 var acceleration: Vector2
 
 var _time: float
 
 func update(extra_time: float = 0.0):
-	_set_time()
+	if not is_instance_valid(orbit): return
+	_set_time(extra_time)
 	_recalculate_state()
 
 func _set_time(extra_time: float = 0.0):
@@ -27,7 +28,7 @@ func _recalculate_state():
 	_anomalies()
 	_distance()
 	_radial_distance()
-	_point_on_orbit()
+	_position()
 	_velocity()
 	_acceleration()
 
@@ -50,8 +51,8 @@ func _radial_distance():
 	radial_distance = orbit.semi_major_axis * (1.0 - pow(orbit.eccentricity, 2.0))\
 		/ (1.0 + orbit.eccentricity * cos(true_anomaly))
 
-func _point_on_orbit():
-	point = Vector2(
+func _position():
+	position = Vector2(
 		distance * cos(orbit.argument_of_periapsis + true_anomaly),
 		distance * sin(orbit.argument_of_periapsis + true_anomaly)
 	)
@@ -70,7 +71,8 @@ func _acceleration():
 		acc * sin(true_anomaly)
 	).rotated(orbit.argument_of_periapsis)
 
-func draw_orbit(segments_count: int = 128) -> Array[Vector2]:
+func orbit_points(segments_count: int = 128) -> Array[Vector2]:
+	if not is_instance_valid(orbit): return []
 	var points: Array[Vector2] = []
 	var theta_step := TAU / segments_count
 	for i in range(segments_count + 1):

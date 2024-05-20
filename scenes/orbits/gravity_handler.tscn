@@ -14,7 +14,7 @@ colors = PackedColorArray(0, 2, 1.5, 0.2, 0, 2, 1.5, 0)
 colors = PackedColorArray(0, 0.4, 2, 0.2, 0, 0.4, 2, 0)
 
 [sub_resource type="Gradient" id="Gradient_8u6to"]
-colors = PackedColorArray(4, 0, 0, 0.2, 4, 0, 0, 0)
+colors = PackedColorArray(3, 0.2, 3, 0.2, 3, 0.2, 3, 0)
 
 [node name="GravityHandler" type="Area2D" node_paths=PackedStringArray("line", "line_local", "warp_line")]
 monitoring = false

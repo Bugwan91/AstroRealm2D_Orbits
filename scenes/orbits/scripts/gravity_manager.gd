@@ -5,6 +5,8 @@ const G := 100_000_000.0
 # solar mass is 1000
 # mu is 100_000_000_000
 
+const GRAVITY_THRESHOLD := 0.001
+
 const FULL_GRAVITY := false
 
 var sun: CelestialBody
