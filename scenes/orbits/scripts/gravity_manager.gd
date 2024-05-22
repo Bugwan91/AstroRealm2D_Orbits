@@ -1,7 +1,8 @@
 @tool
 extends Node
 
-const G := 100_000_000.0
+const G := 100_000_000_00.0
+#const G := 100_000_000.0
 # solar mass is 1000
 # mu is 100_000_000_000
 

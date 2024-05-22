@@ -11,11 +11,11 @@ var parent: CelestialBody
 var main_state: OrbitState = OrbitState.new()
 var predict_state: OrbitState = OrbitState.new()
 
-var r_influence: float:
+var influence_radius: float:
 	set(value):
-		r_influence = value
-		_influence_circle.radius = r_influence
-		_influence_area.monitoring = r_influence > 0.1
+		influence_radius = value
+		_influence_circle.radius = influence_radius
+		_influence_area.monitoring = influence_radius > 0.1
 
 var _equilibrium: float
 var _influence_area := Area2D.new()
@@ -122,6 +122,9 @@ func draw_orbit():
 func is_sun() -> bool:
 	return not is_instance_valid(parent)
 
+func level() -> int:
+	return parent.level() + 1 if not is_sun() else 1
+
 func is_orbiting() -> bool:
 	return not is_sun() and dynamic
 
@@ -129,10 +132,10 @@ func gravity(p: Vector2, predict: bool = false) -> Vector2:
 	var delta_p = current_position(predict) - p
 	var dir = delta_p.normalized()
 	var a: Vector2 = (GravityManager.G * mass / delta_p.length_squared()) * dir
-	if GravityManager.FULL_GRAVITY and not is_sun(): a += parent.gravity(p, predict)
-	return a
+	#if GravityManager.FULL_GRAVITY and not is_sun(): a += parent.gravity(p, predict)
+	return a# + current_acceleration(predict)
 
-func set_predict_time(time: float):
+func set_predict_time(time: float = 0.0):
 	predict_state.update(time)
 	if not is_sun(): parent.set_predict_time(time)
 
@@ -145,11 +148,11 @@ func current_position(predict: bool = false) -> Vector2:
 
 func current_velocity(predict: bool = false) -> Vector2:
 	if is_sun(): return Vector2.ZERO
-	return state(predict).velocity + parent.current_velocity(predict)
+	return (state(predict).velocity if dynamic else Vector2.ZERO) + parent.current_velocity(predict)
 
 func current_acceleration(predict: bool = false) -> Vector2:
 	if is_sun(): return Vector2.ZERO
-	return state(predict).acceleration + parent.current_acceleration(predict)
+	return (state(predict).acceleration if dynamic else Vector2.ZERO) + parent.current_acceleration(predict)
 
 func _sphere_of_influence() -> float:
 	if is_sun(): return sqrt(GravityManager.G * mass / GravityManager.GRAVITY_THRESHOLD)
@@ -168,7 +171,7 @@ func _calculate_equlibrium_radius() -> float:
 	return abs(r)
 
 func _update_influence_area():
-	r_influence = _calculate_equlibrium_radius()
+	influence_radius = _calculate_equlibrium_radius()
 	#_sphere_of_influence()
 	
 

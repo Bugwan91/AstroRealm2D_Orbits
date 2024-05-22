@@ -26,8 +26,6 @@ var max_warp := 0.0
 	get:
 		return FloatingOrigin.warp if is_origin() else warp
 
-var gravity := Vector2.ZERO
-
 var total_velocity: Vector2:
 	get:
 		return absolute_velocity * ( 1.0 + warp)
@@ -57,19 +55,19 @@ var shift: Vector2
 var _extra_shift: Vector2
 
 func _ready():
-	process_priority = -1
+	process_priority = -10
 
 func _process(delta: float):
-	shift = total_velocity * delta + _extra_shift
-	if not is_origin():
-		position += shift
 	rotation += angular_velocity * delta
-	_extra_shift = Vector2.ZERO
 
-func _physics_process(_delta: float):
+func _physics_process(delta: float):
 	acceleration = _acceleration_next_tick
 	absolute_velocity += acceleration
 	_acceleration_next_tick = Vector2.ZERO
+	shift = total_velocity * delta + _extra_shift
+	if not is_origin():
+		position += shift
+	_extra_shift = Vector2.ZERO
 
 func add_velocity(delta_v: Vector2):
 	_acceleration_next_tick += delta_v
@@ -85,4 +83,7 @@ func move(delta: Vector2):
 		FloatingOrigin.move(delta)
 	else:
 		position += delta
-	
+
+func force_update(dp: Vector2, dv: Vector2):
+	move(dp)
+	absolute_velocity += dv

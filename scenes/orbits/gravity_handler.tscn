@@ -11,7 +11,7 @@ colors = PackedColorArray(0, 0.5, 2, 0.2, 0, 0.5, 2, 0)
 colors = PackedColorArray(0, 2, 1.5, 0.2, 0, 2, 1.5, 0)
 
 [sub_resource type="Gradient" id="Gradient_pk6wn"]
-colors = PackedColorArray(0, 0.4, 2, 0.2, 0, 0.4, 2, 0)
+colors = PackedColorArray(1, 1, 1, 0.1, 1, 1, 1, 0)
 
 [sub_resource type="Gradient" id="Gradient_8u6to"]
 colors = PackedColorArray(3, 0.2, 3, 0.2, 3, 0.2, 3, 0)

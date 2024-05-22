@@ -5,10 +5,9 @@ extends Area2D
 @export var line_local: Line2D
 @export var warp_line: Line2D
 @export var line_width := 1.0
-const POINTS := 256
-const STEP := 500.0
-const MIN_STEP := 0.00033
-const DIST_MOD := 0.001
+const POINTS := 64
+const MIN_STEP := 0.01
+const MAX_STEP_MULT := 100.0
 
 var celestial: CelestialBody:
 	set(value):
@@ -41,88 +40,82 @@ func _process(delta):
 	if not is_instance_valid(celestial): return
 	line_local.global_position = celestial.global_position
 
-func _physics_process(delta: float):
+func _physics_process(dt: float):
 	if not is_instance_valid(celestial):
 		MyDebug.info("gravity", 0.0)
 		return
-	var a = celestial.gravity(body.global_position)
-	var precision_rate: int = min(floor(a.length() / 100.0), 50)
-	if precision_rate > 0:
-		var step := delta / precision_rate
-		var p := body.global_position
-		var v := body.absolute_velocity
-		var a_step := Vector2.ZERO
-		var shift := Vector2.ZERO
-		for i in range(0, precision_rate):
-			celestial.set_predict_time(i * step)
-			a_step = celestial.gravity(p + shift, true)
-			v += a_step * step
-			shift += v * step
-		a = (v - body.absolute_velocity) / delta
-		body.add_position(shift)
-	else:
-		a = 0.5 * (a + celestial.gravity(body.global_position + (body.absolute_velocity + a * delta) * delta))
-	MyDebug.info("gravity", a.length())
-	body.add_velocity((a + celestial.current_acceleration()) * delta)
-	_update_line()
+	var res := Utils.integrator_runge_kutta_4(
+		body.global_position,
+		body.absolute_velocity,
+		MainState.current_time(),
+		dt,
+		celestial
+	)
+	body.force_update(res.dp, res.dv + res.dV)
+	MyDebug.info("gravity", res.dv.length() / dt)
+	_update_line(MainState.current_time(), dt)
 
-func _update_line():
+func _update_line(time: float, delta: float):
 	if not is_instance_valid(celestial): return
 	
 	var p := body.global_position
 	var v := body.absolute_velocity
 	
-	var P_start := celestial.global_position
-	var p_l := body.position - celestial.global_position
+	var p_l := body.global_position - celestial.global_position
 	
 	var points: Array[Vector2] = []
 	var points_local: Array[Vector2] = []
-	var time := 0.0
-	var d := 0.0
+	var min_d := delta * 2.0
+	var max_d := delta * 100.0
+	var d := min_d
 	points.append(p)
-	#points_local.append(pl)
-	for i in range(0, POINTS):
+	points_local.append(p_l)
+	
+	var steps := POINTS / celestial.level()
+	for i in range(0, steps):
 		celestial.set_predict_time(time)
-		var a := celestial.gravity(p, true)
 		var P := celestial.current_position(true)
+		var V := celestial.current_velocity(true)
+		var a := celestial.gravity(p, true)
 		var dp := P - p
-		var dv := v - celestial.current_velocity(true)
-		if dp.length() < celestial.r_influence and i % 10 == 0:
+		var dv := v - V
+		if dp.length() < celestial.influence_radius and i % 10 == 0:
 			DebugDraw2d.line_vector(p, dp, Color(1,1,0, 0.1), 1.0 / MainState.camera_zoom, 0.03)
 			DebugDraw2d.line_vector(p, dv, Color(1,0,0,0.1), 1.0 / MainState.camera_zoom, 0.03)
-		var dpL := sqrt(absf(dp.x * DIST_MOD + dp.y * DIST_MOD))
-		d = max((50.0 * dpL) / (a.length() + 0.1 * dv.length()), MIN_STEP)
-		v += (a + celestial.current_acceleration(true)) * d
-		p += v * d
+		var dvL = max((dv * 0.1).length(), 0.0001)
+		d = clamp(100.0 / sqrt(dvL * a.length()), min_d, max_d)
+		var res := Utils.integrator_runge_kutta_4(p, v, time, d, celestial)
+		v += res.dv + res.dV
+		p += res.dp
 		points.append(p)
-		
-		var p_shift := P - P_start
-		p_l += v * d + p_shift
-		points_local.append(p_l)
-		
+		if celestial.is_orbiting() and dp.length() < celestial.influence_radius:
+			p_l += res.dp - res.dP
+			points_local.append(p_l)
 		time += d
 	line.points = points
 	line_local.points = points_local
 	
-	
 	var w := body.max_warp
-	p = body.global_position
-	v = body.absolute_velocity * (1.0 + w)
-	if body.max_warp < 0.001: return
+	var p_w := body.global_position
+	var v_w := body.absolute_velocity * (1.0 + w)
 	var points_warp: Array[Vector2] = []
 	time = 0.0
 	d = 0.0
-	points_warp.append(p)
-	for i in range(0, POINTS):
+	points_warp.append(p_w)
+	for i in range(0, steps / 2):
 		celestial.set_predict_time(time)
-		var a := celestial.gravity(p, true)
-		var dp := celestial.current_position(true) - p
-		var dv := v - celestial.current_velocity(true)
-		var dpL := sqrt(absf(dp.x * DIST_MOD + dp.y * DIST_MOD))
-		d = max((50.0 * dpL) / (a.length() + 0.1 * dv.length()), MIN_STEP)
-		v += (1.0 + w) * a * d + celestial.current_acceleration(true) * d
-		p += v * d
-		points_warp.append(p)
+		var P := celestial.current_position(true)
+		var V := celestial.current_velocity(true)
+		var a_w := celestial.gravity(p_w, true)
+		##var p_half = p_w + 0.5 * (v_w + a_w * d) * d
+		#a_w = celestial.gravity(p_half, true)
+		var dp := P - p
+		var dv := v - V
+		var dvL = max((dv * 0.1).length(), 0.0001)
+		d = clamp(100.0 / sqrt(dvL * a_w.length()), delta, delta * MAX_STEP_MULT)
+		v_w += (1.0 + w) * a_w * d
+		p_w += v_w * d
+		points_warp.append(p_w)
 	warp_line.points = points_warp
 
 func update_old_line():

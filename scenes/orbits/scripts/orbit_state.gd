@@ -1,5 +1,6 @@
+@tool
 class_name OrbitState
-extends Node
+extends Resource
 
 @export var orbit: KeplerOrbit
 
@@ -15,13 +16,13 @@ var acceleration: Vector2
 
 var _time: float
 
-func update(extra_time: float = 0.0):
+func update(time: float = MainState.current_time()):
 	if not is_instance_valid(orbit): return
-	_set_time(extra_time)
+	_set_time(time)
 	_recalculate_state()
 
-func _set_time(extra_time: float = 0.0):
-	_time = MainState.current_time() + extra_time
+func _set_time(time: float = 0.0):
+	_time = time
 	_from_periapsis_time()
 
 func _recalculate_state():

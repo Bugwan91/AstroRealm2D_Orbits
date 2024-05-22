@@ -28,7 +28,7 @@ script = ExtResource("5_j27o2")
 semi_major_axis = 48348.0
 eccentricity = 0.8
 argument_of_periapsis = 3.14
-M = 200.0
+M = 2.0
 
 [sub_resource type="Gradient" id="Gradient_h2v3c"]
 colors = PackedColorArray(2, 0.1, 0, 1, 2, 0.1, 0, 0.1)
@@ -396,7 +396,7 @@ script = ExtResource("5_j27o2")
 semi_major_axis = 125296.0
 eccentricity = 0.0
 argument_of_periapsis = 0.0
-M = 200.0
+M = 2.0
 
 [sub_resource type="Gradient" id="Gradient_88vmi"]
 colors = PackedColorArray(0, 0.3, 2, 1, 0, 0.3, 2, 0.1)
@@ -761,10 +761,10 @@ animations = [{
 
 [sub_resource type="Resource" id="Resource_t3otr"]
 script = ExtResource("5_j27o2")
-semi_major_axis = 6397.27
+semi_major_axis = 12175.7
 eccentricity = 0.0
 argument_of_periapsis = 5.0
-M = 20.0
+M = 0.2
 
 [sub_resource type="Gradient" id="Gradient_t16qx"]
 colors = PackedColorArray(0.7, 0.7, 0.7, 1, 0.7, 0.7, 0.7, 0.1)
@@ -1132,7 +1132,7 @@ script = ExtResource("5_j27o2")
 semi_major_axis = 245888.0
 eccentricity = 0.2
 argument_of_periapsis = 4.0
-M = 200.0
+M = 2.0
 
 [sub_resource type="Gradient" id="Gradient_ycogo"]
 colors = PackedColorArray(2, 0.3, 0, 1, 2, 0.3, 0, 0.1)
@@ -1500,7 +1500,7 @@ script = ExtResource("5_j27o2")
 semi_major_axis = 501632.0
 eccentricity = 0.1
 argument_of_periapsis = 5.0
-M = 200.0
+M = 2.0
 
 [sub_resource type="Gradient" id="Gradient_pwacx"]
 colors = PackedColorArray(2, 0.7, 0, 1, 2, 0.7, 0, 0.1)
@@ -1868,7 +1868,7 @@ script = ExtResource("5_j27o2")
 semi_major_axis = 20611.3
 eccentricity = 0.9
 argument_of_periapsis = 5.0
-M = 50.0
+M = 0.5
 
 [sub_resource type="Gradient" id="Gradient_l6fvk"]
 colors = PackedColorArray(0.7, 0.7, 0.7, 1, 0.7, 0.7, 0.7, 0.1)
@@ -1877,7 +1877,7 @@ colors = PackedColorArray(0.7, 0.7, 0.7, 1, 0.7, 0.7, 0.7, 0.1)
 
 [node name="Sun" parent="." instance=ExtResource("1_go2s5")]
 script = ExtResource("2_sj8pr")
-mass = 200.0
+mass = 2.0
 dynamic = false
 
 [node name="PointLightSun" type="PointLight2D" parent="Sun"]
@@ -1897,7 +1897,7 @@ color = Color(0, 0.8, 2, 1)
 [node name="Lava" type="Node2D" parent="Sun"]
 position = Vector2(48348, 0)
 script = ExtResource("2_sj8pr")
-mass = 20.0
+mass = 0.2
 orbit = SubResource("Resource_4id1f")
 orbit_color = SubResource("Gradient_h2v3c")
 
@@ -1915,7 +1915,7 @@ color = Color(1, 1, 1, 1)
 [node name="Earth" type="Node2D" parent="Sun"]
 position = Vector2(125296, 0)
 script = ExtResource("2_sj8pr")
-mass = 20.0
+mass = 0.2
 orbit = SubResource("Resource_40ejg")
 orbit_color = SubResource("Gradient_88vmi")
 
@@ -1931,8 +1931,9 @@ icon_scale = 0.03
 color = Color(1, 1, 1, 1)
 
 [node name="Moon" type="Node2D" parent="Sun/Earth"]
-position = Vector2(1814.67, -6134.5)
+position = Vector2(17218, -9260)
 script = ExtResource("2_sj8pr")
+mass = 0.01
 orbit = SubResource("Resource_t3otr")
 orbit_color = SubResource("Gradient_t16qx")
 
@@ -1950,8 +1951,7 @@ color = Color(1, 1, 1, 1)
 [node name="Mars" type="Node2D" parent="Sun"]
 position = Vector2(245888, 0)
 script = ExtResource("2_sj8pr")
-mass = 10.0
-dynamic = false
+mass = 0.1
 orbit = SubResource("Resource_h4fr1")
 orbit_color = SubResource("Gradient_ycogo")
 
@@ -1969,7 +1969,7 @@ color = Color(1, 1, 1, 1)
 [node name="Jupiter" type="Node2D" parent="Sun"]
 position = Vector2(501632, 0)
 script = ExtResource("2_sj8pr")
-mass = 50.0
+mass = 0.5
 orbit = SubResource("Resource_ivcbb")
 orbit_color = SubResource("Gradient_pwacx")
 
@@ -1987,6 +1987,7 @@ color = Color(1, 1, 1, 1)
 [node name="Moon" type="Node2D" parent="Sun/Jupiter"]
 position = Vector2(13008, -15988)
 script = ExtResource("2_sj8pr")
+mass = 0.01
 orbit = SubResource("Resource_t7bv2")
 orbit_color = SubResource("Gradient_l6fvk")
 
